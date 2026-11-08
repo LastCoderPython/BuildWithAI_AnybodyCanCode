@@ -352,20 +352,22 @@ const RECOGNITION_RULES = [
 const FAQ_ITEMS: FaqItem[] = [
   {
     question: 'Is it free?',
-    answer: 'Yes.',
+    answer: 'Yes. Entry is free, with no registration fee or hidden charges.',
   },
   {
     question: 'Do I need to know coding?',
-    answer: 'No.',
+    answer:
+      "No. You don't need any prior coding experience to attend or to build a project.",
   },
   {
     question: 'What should I bring?',
     answer:
-      'A laptop if you have one, and a Google account. Teams can share devices.',
+      'Bring a laptop if you have one, and a Google account. Teams can share devices.',
   },
   {
     question: 'Who can attend?',
-    answer: 'BSSRV students of all branches and departments.',
+    answer:
+      'The workshop is open to BSSRV students of all branches and departments.',
   },
   {
     question: 'Is it a competition?',
@@ -375,12 +377,12 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: 'Can I join alone?',
     answer:
-      'Yes. Register individually and pair up at the venue, or build on your own.',
+      'Yes. You can register individually and pair up at the venue, or build on your own.',
   },
   {
     question: 'What should I build?',
     answer:
-      "Anything you like, as long as it solves a real problem for someone. Not sure where to start? We'll give you an idea card, and mentors will help you choose and scope your project.",
+      "You can build anything you like, as long as it solves a real problem for someone. Not sure where to start? We'll give you an idea card, and mentors will help you choose and scope your project.",
   },
   {
     question: 'Are there any limits on what I can build?',
@@ -390,7 +392,7 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: 'What is the guided bootcamp?',
     answer:
-      'A speaker-led, step-by-step build-along on Day 1 where everyone creates a small app together, with mentors helping.',
+      'The guided bootcamp is a speaker-led, step-by-step build-along on Day 1 where everyone creates a small app together, with mentors helping.',
   },
   {
     question: 'Is the bootcamp build judged?',
@@ -400,15 +402,16 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: 'Do I need a GitHub account?',
     answer:
-      'It helps if you want to save or share your project, and for the optional Keploy testing bonus.',
+      'A GitHub account is optional, though it helps if you want to save or share your project, and for the optional Keploy testing bonus.',
   },
   {
     question: 'How are the best builds chosen?',
-    answer: 'By a judging panel using the criteria on this page.',
+    answer:
+      'The best builds are chosen by a judging panel using the criteria published on this page.',
   },
   {
     question: 'Will there be certificates?',
-    answer: 'To be announced.',
+    answer: 'Certificate details are to be announced.',
   },
 ];
 
@@ -425,51 +428,18 @@ export default function EventPage() {
     CONFIG.EVENT_DATE_ISO && CONFIG.EVENT_DATE_ISO.trim().length > 0
   );
 
-  // Structured data for SEO (FAQPage + EducationEvent only when a startDate is set)
+  // Structured data for SEO (FAQPage only while dates are TBA; no Event schema or date fields)
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@graph': [
-      ...(hasEventDate
-        ? [
-            {
-              '@type': 'EducationEvent',
-              name: 'Build with AI: Anybody Can Code',
-              description:
-                'A free, beginner-friendly two-part workshop at Birangana Sati Sadhani Rajyik Vishwavidyalaya (BSSRV), Golaghat, Assam.',
-              startDate: CONFIG.EVENT_DATE_ISO,
-              eventStatus: 'https://schema.org/EventScheduled',
-              eventAttendanceMode:
-                'https://schema.org/MixedEventAttendanceMode',
-              isAccessibleForFree: true,
-              location: {
-                '@type': 'Place',
-                name: CONFIG.VENUE,
-                address: {
-                  '@type': 'PostalAddress',
-                  addressLocality: 'Golaghat',
-                  addressRegion: 'Assam',
-                  addressCountry: 'IN',
-                },
-              },
-              organizer: {
-                '@type': 'Organization',
-                name: 'B.Tech 3rd & 5th semester students of BSSRV',
-              },
-            },
-          ]
-        : []),
-      {
-        '@type': 'FAQPage',
-        mainEntity: FAQ_ITEMS.map((item) => ({
-          '@type': 'Question',
-          name: item.question,
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: item.answer,
-          },
-        })),
+    '@type': 'FAQPage',
+    mainEntity: FAQ_ITEMS.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
       },
-    ],
+    })),
   };
 
   const isPlaceholder = (value?: string) =>
@@ -650,9 +620,21 @@ export default function EventPage() {
         <div className="w-full h-1.5 bg-[#111111]" aria-hidden="true" />
 
         {/* ===================================================================
-            SECTION 2 & 3 BAND: SUPPORTED BY STRIP + CONDITIONAL COUNTDOWN ROW
+            SECTION 2 & 3 BAND: QUICK FACTS + SUPPORTED BY STRIP + CONDITIONAL COUNTDOWN
             =================================================================== */}
         <div className="w-full bg-[#F4F0E6] pt-6 md:pt-10">
+          {/* Quick facts plain-text summary directly below the Hero section */}
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-10 pb-4 md:pb-6">
+            <p className="font-body text-xs sm:text-sm text-[#111111]/85 leading-relaxed">
+              <strong className="font-bold text-[#111111]">
+                Quick facts:
+              </strong>{' '}
+              Free entry; open to all BSSRV branches and departments; beginners
+              welcome; individuals or teams of up to 3; Day 1 in person, Day 2
+              virtual; dates to be announced; BSSRV Campus, Golaghat, Assam.
+            </p>
+          </div>
+
           <section
             id="supported-by"
             aria-label="Supported by"
@@ -884,9 +866,9 @@ export default function EventPage() {
 
               <FadeUpBlock className="border-2 border-[#111111] md:border-0 bg-[#1F4FE0] text-[#F4F0E6] p-5 sm:p-8 md:p-10 space-y-6 md:space-y-8">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="font-pixel text-xs uppercase bg-[#F5A623] text-[#111111] px-2.5 py-1 border border-[#111111] md:border-0">
+                  <h2 className="font-pixel text-xs uppercase bg-[#F5A623] text-[#111111] px-2.5 py-1 border border-[#111111] md:border-0">
                     Open Track
-                  </span>
+                  </h2>
                   <span className="font-body text-sm md:text-base font-semibold text-[#F4F0E6]">
                     Individuals or teams of up to 3
                   </span>
@@ -1431,9 +1413,9 @@ export default function EventPage() {
               {/* Left Column: Single-line smaller headline, Tagline, Final Registration CTA */}
               <div className="md:col-span-5 lg:col-span-6 flex flex-col justify-between gap-6">
                 <div>
-                  <h2 className="font-display text-lg sm:text-xl lg:text-2xl uppercase text-[#F4F0E6] leading-snug">
+                  <p className="font-display text-lg sm:text-xl lg:text-2xl uppercase text-[#F4F0E6] leading-snug">
                     Build with AI: Anybody Can Code
-                  </h2>
+                  </p>
                   <p className="mt-2 font-body text-sm sm:text-base md:text-lg font-medium text-[#1FAA59]">
                     Something is building at BSSRV
                   </p>

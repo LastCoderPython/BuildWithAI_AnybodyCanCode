@@ -40,37 +40,38 @@ const silkscreen = Silkscreen({
   preload: false,
 });
 
+const SITE_TITLE = 'Build with AI: Anybody Can Code | BSSRV Golaghat';
+const SITE_DESCRIPTION =
+  'A free, beginner-friendly AI workshop for BSSRV students. Build a working project with AI tools. Dates to be announced.';
+
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.APP_URL ||
-      'https://ais-pre-q2m4trueadx4a27tkw47d6-252697980576.asia-southeast1.run.app'
-  ),
-  title: 'Build with AI: Anybody Can Code — BSSRV',
-  description:
-    'A free, beginner-friendly two-part workshop at Birangana Sati Sadhani Rajyik Vishwavidyalaya (BSSRV), Golaghat, Assam.',
+  metadataBase: new URL('https://www.buildwai.tech'),
+  alternates: {
+    canonical: '/',
+  },
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
   openGraph: {
-    title: 'Build with AI: Anybody Can Code — BSSRV',
-    description:
-      'Something is building at BSSRV. A free, beginner-friendly two-part workshop at Birangana Sati Sadhani Rajyik Vishwavidyalaya (BSSRV), Golaghat, Assam.',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: '/',
     type: 'website',
+    locale: 'en_IN',
     siteName: 'Build with AI: Anybody Can Code',
     images: [
       {
-        url: '/assets/aistudio/WhatsApp_Image_2026-10-29_at_11.32.56_AM_24b39baa.jpeg',
-        width: 1080,
-        height: 1350,
-        alt: 'Build with AI: Anybody Can Code — BSSRV Workshop Poster',
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Build with AI: Anybody Can Code — Free, Open to all branches, Dates to be announced',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Build with AI: Anybody Can Code — BSSRV',
-    description:
-      'Something is building at BSSRV. Free, beginner-friendly two-part AI workshop at BSSRV, Golaghat, Assam.',
-    images: [
-      '/assets/aistudio/WhatsApp_Image_2026-10-29_at_11.32.56_AM_24b39baa.jpeg',
-    ],
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: ['/og-image.jpg'],
   },
 };
 

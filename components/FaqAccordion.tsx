@@ -49,16 +49,19 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
           </button>
         </h3>
 
-        {isOpen && (
-          <div
-            id={panelId}
-            role="region"
-            aria-labelledby={buttonId}
-            className="px-4 pb-4 sm:px-5 sm:pb-5 pt-2 text-sm sm:text-base text-[#111111] border-t border-[#111111]/15 md:border-t-0 bg-[#F4F0E6] leading-relaxed"
-          >
-            <p>{item.answer}</p>
-          </div>
-        )}
+        <div
+          id={panelId}
+          role="region"
+          aria-labelledby={buttonId}
+          hidden={!isOpen}
+          className={
+            isOpen
+              ? 'px-4 pb-4 sm:px-5 sm:pb-5 pt-2 text-sm sm:text-base text-[#111111] border-t border-[#111111]/15 md:border-t-0 bg-[#F4F0E6] leading-relaxed'
+              : 'hidden'
+          }
+        >
+          <p>{item.answer}</p>
+        </div>
       </div>
     );
   };

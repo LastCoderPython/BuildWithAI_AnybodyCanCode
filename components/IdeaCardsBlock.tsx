@@ -271,9 +271,9 @@ export function IdeaCardsBlock() {
         {/* Header Row + Surprise Me Button */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div className="space-y-1.5">
-            <h3 className="font-display text-2xl sm:text-3xl md:text-4xl uppercase text-[#111111] text-balance">
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl uppercase text-[#111111] text-balance">
               Not sure what to build? Start here.
-            </h3>
+            </h2>
             <p className="font-body text-base md:text-lg text-[#111111]/90">
               Pick one of these, remix it, or bring your own.
             </p>
@@ -412,9 +412,9 @@ export function IdeaCardsBlock() {
                                 )}
                               </div>
 
-                              <h4 className="font-body font-bold text-2xl sm:text-3xl text-[#111111] leading-tight">
+                              <h3 className="font-body font-bold text-2xl sm:text-3xl text-[#111111] leading-tight">
                                 {card.title}
-                              </h4>
+                              </h3>
 
                               <p className="font-body text-base sm:text-lg md:text-xl text-[#111111]/90 leading-relaxed">
                                 {card.description}
@@ -509,9 +509,9 @@ export function IdeaCardsBlock() {
                           )}
                         </div>
 
-                        <h4 className="font-body font-bold text-base sm:text-lg text-[#111111] leading-snug">
+                        <h3 className="font-body font-bold text-base sm:text-lg text-[#111111] leading-snug">
                           {card.title}
-                        </h4>
+                        </h3>
 
                         <p className="font-body text-sm text-[#111111]/90 leading-relaxed">
                           {card.description}
