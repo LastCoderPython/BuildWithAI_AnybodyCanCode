@@ -8,8 +8,9 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  // Allow access to remote image placeholder.
+  // Allow access to remote image placeholder and serve AVIF with WebP fallback.
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -18,6 +19,9 @@ const nextConfig: NextConfig = {
         pathname: '/**', // This allows any path under the hostname
       },
     ],
+  },
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'motion'],
   },
   output: 'standalone',
   transpilePackages: ['motion'],

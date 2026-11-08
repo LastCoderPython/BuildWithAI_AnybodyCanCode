@@ -13,6 +13,7 @@ const pinyonScript = Pinyon_Script({
   subsets: ['latin'],
   variable: '--font-pinyon-script',
   display: 'swap',
+  preload: true,
 });
 
 const archivoBlack = Archivo_Black({
@@ -20,6 +21,7 @@ const archivoBlack = Archivo_Black({
   subsets: ['latin'],
   variable: '--font-archivo-black',
   display: 'swap',
+  preload: true,
 });
 
 const spaceGrotesk = Space_Grotesk({
@@ -27,6 +29,7 @@ const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-space-grotesk',
   display: 'swap',
+  preload: true,
 });
 
 const silkscreen = Silkscreen({
@@ -34,16 +37,21 @@ const silkscreen = Silkscreen({
   subsets: ['latin'],
   variable: '--font-silkscreen',
   display: 'swap',
+  preload: false,
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.APP_URL ||
+      'https://ais-pre-q2m4trueadx4a27tkw47d6-252697980576.asia-southeast1.run.app'
+  ),
   title: 'Build with AI: Anybody Can Code — BSSRV',
   description:
-    'A free, beginner-friendly two-part workshop at Birangana Sati Sadhani Rajyik Vishwavidyalaya (BSSRV), Golaghat, Assam. Day 1: Thursday, 12 November 2026 (tentative).',
+    'A free, beginner-friendly two-part workshop at Birangana Sati Sadhani Rajyik Vishwavidyalaya (BSSRV), Golaghat, Assam.',
   openGraph: {
     title: 'Build with AI: Anybody Can Code — BSSRV',
     description:
-      'Something is building at BSSRV. A free, beginner-friendly two-part workshop at Birangana Sati Sadhani Rajyik Vishwavidyalaya (BSSRV), Golaghat, Assam. Day 1: Thursday, 12 November 2026 (tentative).',
+      'Something is building at BSSRV. A free, beginner-friendly two-part workshop at Birangana Sati Sadhani Rajyik Vishwavidyalaya (BSSRV), Golaghat, Assam.',
     type: 'website',
     siteName: 'Build with AI: Anybody Can Code',
     images: [
@@ -59,7 +67,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Build with AI: Anybody Can Code — BSSRV',
     description:
-      'Something is building at BSSRV. Free, beginner-friendly two-part AI workshop at BSSRV, Golaghat, Assam (Day 1: Thursday, 12 November 2026 - tentative).',
+      'Something is building at BSSRV. Free, beginner-friendly two-part AI workshop at BSSRV, Golaghat, Assam.',
     images: [
       '/assets/aistudio/WhatsApp_Image_2026-10-29_at_11.32.56_AM_24b39baa.jpeg',
     ],

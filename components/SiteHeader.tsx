@@ -1,8 +1,16 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { ArrowUpRight, Menu, X } from 'lucide-react';
+import {
+  AnimatePresence,
+  LazyMotion,
+  domAnimation,
+  m,
+  useReducedMotion,
+} from 'motion/react';
+import ArrowUpRight from 'lucide-react/dist/esm/icons/arrow-up-right';
+import Menu from 'lucide-react/dist/esm/icons/menu';
+import X from 'lucide-react/dist/esm/icons/x';
 
 interface SiteHeaderProps {
   registrationUrl: string;
@@ -181,82 +189,88 @@ export function SiteHeader({ registrationUrl, instagramUrl }: SiteHeaderProps) {
         </div>
 
         {/* Full-width mobile dropdown panel below the header */}
-        <AnimatePresence initial={false}>
-          {isOpen && (
-            <motion.nav
-              id="mobile-nav-menu"
-              aria-label="Mobile navigation"
-              initial={
-                prefersReducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -6 }
-              }
-              animate={{ opacity: 1, y: 0 }}
-              exit={
-                prefersReducedMotion ? { opacity: 0, y: 0 } : { opacity: 0, y: -6 }
-              }
-              transition={
-                prefersReducedMotion
-                  ? { duration: 0 }
-                  : { duration: 0.15, ease: 'easeOut' }
-              }
-              className="md:hidden absolute top-full left-0 right-0 w-full bg-[#F4F0E6] text-[#111111] border-b-2 border-[#111111] z-50"
-            >
-              <div className="px-4 py-4 flex flex-col">
-                <ul className="divide-y divide-[#111111]/20 border-b border-[#111111]/20">
-                  {NAV_LINKS.map((link, idx) => (
-                    <li key={link.href}>
+        <LazyMotion features={domAnimation}>
+          <AnimatePresence initial={false}>
+            {isOpen && (
+              <m.nav
+                id="mobile-nav-menu"
+                aria-label="Mobile navigation"
+                initial={
+                  prefersReducedMotion
+                    ? { opacity: 1, y: 0 }
+                    : { opacity: 0, y: -6 }
+                }
+                animate={{ opacity: 1, y: 0 }}
+                exit={
+                  prefersReducedMotion
+                    ? { opacity: 0, y: 0 }
+                    : { opacity: 0, y: -6 }
+                }
+                transition={
+                  prefersReducedMotion
+                    ? { duration: 0 }
+                    : { duration: 0.15, ease: 'easeOut' }
+                }
+                className="md:hidden absolute top-full left-0 right-0 w-full bg-[#F4F0E6] text-[#111111] border-b-2 border-[#111111] z-50"
+              >
+                <div className="px-4 py-4 flex flex-col">
+                  <ul className="divide-y divide-[#111111]/20 border-b border-[#111111]/20">
+                    {NAV_LINKS.map((link, idx) => (
+                      <li key={link.href}>
+                        <a
+                          ref={idx === 0 ? firstLinkRef : undefined}
+                          href={link.href}
+                          onClick={() => setIsOpen(false)}
+                          className="flex items-center justify-between py-3 px-1 font-body font-bold text-base text-[#111111] hover:text-[#1F4FE0] focus-visible:outline-2 focus-visible:outline-[#1F4FE0]"
+                        >
+                          <span>{link.label}</span>
+                          <span
+                            className="w-2.5 h-2.5 border border-[#111111] shrink-0"
+                            style={{ backgroundColor: link.accent }}
+                            aria-hidden="true"
+                          />
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* Primary CTA button at the bottom of the mobile menu */}
+                  <div className="pt-4">
+                    {hasReg ? (
                       <a
-                        ref={idx === 0 ? firstLinkRef : undefined}
-                        href={link.href}
+                        href={registrationUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         onClick={() => setIsOpen(false)}
-                        className="flex items-center justify-between py-3 px-1 font-body font-bold text-base text-[#111111] hover:text-[#1F4FE0] focus-visible:outline-2 focus-visible:outline-[#1F4FE0]"
+                        className="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 border-2 border-[#111111] bg-[#1F4FE0] text-[#F4F0E6] hover:bg-[#111111] hover:text-[#F5A623] transition-colors duration-150 font-body font-bold text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]"
                       >
-                        <span>{link.label}</span>
-                        <span
-                          className="w-2.5 h-2.5 border border-[#111111] shrink-0"
-                          style={{ backgroundColor: link.accent }}
+                        <span>Register now</span>
+                        <ArrowUpRight
+                          className="w-4 h-4 shrink-0"
                           aria-hidden="true"
                         />
                       </a>
-                    </li>
-                  ))}
-                </ul>
-
-                {/* Primary CTA button at the bottom of the mobile menu */}
-                <div className="pt-4">
-                  {hasReg ? (
-                    <a
-                      href={registrationUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => setIsOpen(false)}
-                      className="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 border-2 border-[#111111] bg-[#1F4FE0] text-[#F4F0E6] hover:bg-[#111111] hover:text-[#F5A623] transition-colors duration-150 font-body font-bold text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]"
-                    >
-                      <span>Register now</span>
-                      <ArrowUpRight
-                        className="w-4 h-4 shrink-0"
-                        aria-hidden="true"
-                      />
-                    </a>
-                  ) : (
-                    <a
-                      href={instagramUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => setIsOpen(false)}
-                      className="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 border-2 border-[#111111] bg-[#1F4FE0] text-[#F4F0E6] hover:bg-[#111111] hover:text-[#F5A623] transition-colors duration-150 font-body font-bold text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]"
-                    >
-                      <span>Follow for updates</span>
-                      <ArrowUpRight
-                        className="w-4 h-4 shrink-0"
-                        aria-hidden="true"
-                      />
-                    </a>
-                  )}
+                    ) : (
+                      <a
+                        href={instagramUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => setIsOpen(false)}
+                        className="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 border-2 border-[#111111] bg-[#1F4FE0] text-[#F4F0E6] hover:bg-[#111111] hover:text-[#F5A623] transition-colors duration-150 font-body font-bold text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]"
+                      >
+                        <span>Follow for updates</span>
+                        <ArrowUpRight
+                          className="w-4 h-4 shrink-0"
+                          aria-hidden="true"
+                        />
+                      </a>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </motion.nav>
-          )}
-        </AnimatePresence>
+              </m.nav>
+            )}
+          </AnimatePresence>
+        </LazyMotion>
       </header>
 
       {/* Backdrop overlay to catch taps outside the mobile dropdown */}

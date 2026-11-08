@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import Image from 'next/image';
+import { LazyMotion, domAnimation, m, useReducedMotion } from 'motion/react';
 
 /**
  * Lightweight one-shot fade-up wrapper (12px offset, runs once, respects prefers-reduced-motion).
- * Used only on section headings and key content blocks rather than entire section containers.
+ * Uses LazyMotion with domAnimation features.
  */
 export function FadeUpBlock({
   children,
@@ -17,15 +18,17 @@ export function FadeUpBlock({
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <motion.div
-      initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-      className={className}
-    >
-      {children}
-    </motion.div>
+    <LazyMotion features={domAnimation}>
+      <m.div
+        initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        className={className}
+      >
+        {children}
+      </m.div>
+    </LazyMotion>
   );
 }
 
@@ -44,22 +47,24 @@ export function WhoItsForCard({
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <motion.article
-      whileHover={
-        prefersReducedMotion ? undefined : { y: -4, scale: 1.015, rotate }
-      }
-      whileTap={prefersReducedMotion ? undefined : { scale: 0.99 }}
-      transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-      className={className}
-    >
-      {children}
-    </motion.article>
+    <LazyMotion features={domAnimation}>
+      <m.article
+        whileHover={
+          prefersReducedMotion ? undefined : { y: -4, scale: 1.015, rotate }
+        }
+        whileTap={prefersReducedMotion ? undefined : { scale: 0.99 }}
+        transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+        className={className}
+      >
+        {children}
+      </m.article>
+    </LazyMotion>
   );
 }
 
 /**
- * Optimized Hero artwork image with WebP source, explicit width & height (900x766),
- * decoding="async", and graceful fallback if the image fails to load.
+ * Optimized Hero artwork image with WebP/AVIF via next/image, explicit width & height (1200x1021),
+ * priority loading (only on the hero image), accurate sizes, and graceful fallback.
  */
 export function HeroArtwork({
   webpSrc,
@@ -89,25 +94,25 @@ export function HeroArtwork({
   }
 
   return (
-    <picture className="block w-full md:h-full">
-      <source srcSet={webpSrc} type="image/webp" />
-      <img
+    <div className="block w-full md:h-full">
+      <Image
         src={webpSrc || fallbackJpgSrc}
         alt={alt}
-        width={900}
-        height={766}
-        decoding="async"
-        fetchPriority="high"
+        width={1200}
+        height={1021}
+        priority
+        quality={75}
+        sizes="(max-width: 767px) 100vw, (max-width: 1200px) 50vw, 560px"
         referrerPolicy="no-referrer"
         onError={() => setArtworkError(true)}
         className="w-full h-44 sm:h-56 md:h-full block border border-[#111111] md:border-0 object-cover object-center"
       />
-    </picture>
+    </div>
   );
 }
 
 /**
- * Square speaker photo with 3px solid black border (480x480 WebP, no filters or effects),
+ * Square speaker photo with 3px solid black border (480x480 WebP via next/image, lazy-loaded),
  * or an initials avatar placeholder when no photo is provided or while awaiting upload.
  */
 export function SpeakerAvatar({
@@ -144,12 +149,14 @@ export function SpeakerAvatar({
 
   return (
     <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 border-[3px] border-[#111111] bg-[#F4F0E6] overflow-hidden">
-      <img
-        src={photoSrc}
+      <Image
+        src={photoSrc!}
         alt={alt}
         width={480}
         height={480}
-        decoding="async"
+        loading="lazy"
+        quality={75}
+        sizes="(max-width: 639px) 80px, 96px"
         referrerPolicy="no-referrer"
         onError={() => setImgError(true)}
         className="w-full h-full object-cover object-center block"

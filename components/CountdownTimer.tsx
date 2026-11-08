@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react';
 
 export function CountdownTimer({ eventDateIso }: { eventDateIso: string }) {
+  const hasDate = Boolean(eventDateIso && eventDateIso.trim().length > 0);
+
   const [countdown, setCountdown] = useState<{
     isPast: boolean;
     days: number;
@@ -18,6 +20,8 @@ export function CountdownTimer({ eventDateIso }: { eventDateIso: string }) {
   });
 
   useEffect(() => {
+    if (!hasDate) return;
+
     const targetMs = new Date(eventDateIso).getTime();
 
     const updateTimer = () => {
@@ -52,7 +56,11 @@ export function CountdownTimer({ eventDateIso }: { eventDateIso: string }) {
     // Update once per minute (60,000 ms), not every second
     const interval = setInterval(updateTimer, 60000);
     return () => clearInterval(interval);
-  }, [eventDateIso]);
+  }, [eventDateIso, hasDate]);
+
+  if (!hasDate) {
+    return null;
+  }
 
   return (
     <div className="min-h-[92px] sm:h-[100px] border-2 border-[#111111] md:border-0 bg-[#111111] text-[#F4F0E6] px-5 py-4 md:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-6">
@@ -62,7 +70,7 @@ export function CountdownTimer({ eventDateIso }: { eventDateIso: string }) {
           aria-hidden="true"
         />
         <h2 className="font-pixel text-xs uppercase tracking-wider text-[#F5A623]">
-          Day 1 (tentative)
+          Day 1 Countdown
         </h2>
       </div>
 
@@ -83,7 +91,7 @@ export function CountdownTimer({ eventDateIso }: { eventDateIso: string }) {
           className="flex items-center gap-2.5 sm:gap-4"
           role="timer"
           aria-live="polite"
-          aria-label={`Countdown to Day 1 (tentative): ${countdown.days} days, ${countdown.hours} hours, ${countdown.minutes} minutes`}
+          aria-label={`Countdown to Day 1: ${countdown.days} days, ${countdown.hours} hours, ${countdown.minutes} minutes`}
         >
           <div className="flex items-baseline gap-1.5">
             <span className="font-display text-2xl sm:text-3xl leading-none tabular-nums text-[#F4F0E6]">

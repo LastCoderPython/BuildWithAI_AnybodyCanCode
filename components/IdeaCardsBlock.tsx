@@ -3,17 +3,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   AnimatePresence,
-  motion,
+  LazyMotion,
+  domAnimation,
+  m,
   useReducedMotion,
-  type PanInfo,
 } from 'motion/react';
-import {
-  ChevronLeft,
-  ChevronRight,
-  Layers,
-  LayoutGrid,
-  Sparkles,
-} from 'lucide-react';
+import ChevronLeft from 'lucide-react/dist/esm/icons/chevron-left';
+import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right';
+import Layers from 'lucide-react/dist/esm/icons/layers';
+import LayoutGrid from 'lucide-react/dist/esm/icons/layout-grid';
+import Sparkles from 'lucide-react/dist/esm/icons/sparkles';
 
 export interface IdeaCardItem {
   number: number;
@@ -89,6 +88,7 @@ export function IdeaCardsBlock() {
   const [isGridOpen, setIsGridOpen] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [exitDirection, setExitDirection] = useState<'left' | 'right'>('left');
+  const [dragOffsetX, setDragOffsetX] = useState(0);
   const [highlightedNumber, setHighlightedNumber] = useState<number | null>(
     null
   );
@@ -96,6 +96,13 @@ export function IdeaCardsBlock() {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const stackRegionRef = useRef<HTMLDivElement | null>(null);
   const gridCardRefs = useRef<Record<number, HTMLElement | null>>({});
+  const pointerStartRef = useRef<{
+    x: number;
+    y: number;
+    time: number;
+    pointerId: number;
+    lockedAxis: 'x' | 'y' | null;
+  } | null>(null);
 
   useEffect(() => {
     return () => {
@@ -119,6 +126,7 @@ export function IdeaCardsBlock() {
   const handleNext = (direction: 'left' | 'right' = 'left') => {
     setHasInteracted(true);
     setExitDirection(direction);
+    setDragOffsetX(0);
     setCurrentIndex((prev) => (prev + 1) % IDEA_CARDS.length);
   };
 
@@ -126,6 +134,7 @@ export function IdeaCardsBlock() {
   const handlePrev = () => {
     setHasInteracted(true);
     setExitDirection('right');
+    setDragOffsetX(0);
     setCurrentIndex(
       (prev) => (prev - 1 + IDEA_CARDS.length) % IDEA_CARDS.length
     );
@@ -135,6 +144,7 @@ export function IdeaCardsBlock() {
   const handleSurpriseMe = () => {
     setHasInteracted(true);
     setExitDirection('left');
+    setDragOffsetX(0);
 
     const currentFrontNumber = deck[currentIndex]?.number;
     const copy = [...IDEA_CARDS];
@@ -183,17 +193,61 @@ export function IdeaCardsBlock() {
     }
   };
 
-  const handleDragEnd = (
-    _event: MouseEvent | TouchEvent | PointerEvent,
-    info: PanInfo
-  ) => {
-    const movedFarEnough = Math.abs(info.offset.x) > SWIPE_DISTANCE_THRESHOLD;
-    const movedFastEnough =
-      Math.abs(info.velocity.x) > SWIPE_VELOCITY_THRESHOLD;
+  const handleCardPointerDown = (event: React.PointerEvent<HTMLElement>) => {
+    stackRegionRef.current?.focus({ preventScroll: true });
+    pointerStartRef.current = {
+      x: event.clientX,
+      y: event.clientY,
+      time: performance.now(),
+      pointerId: event.pointerId,
+      lockedAxis: null,
+    };
+  };
 
-    if (movedFarEnough || movedFastEnough) {
-      handleNext(info.offset.x < 0 ? 'left' : 'right');
+  const handleCardPointerMove = (event: React.PointerEvent<HTMLElement>) => {
+    const start = pointerStartRef.current;
+    if (!start || start.pointerId !== event.pointerId) return;
+
+    const dx = event.clientX - start.x;
+    const dy = event.clientY - start.y;
+
+    if (!start.lockedAxis) {
+      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+      start.lockedAxis = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y';
+      if (start.lockedAxis === 'x') {
+        try {
+          event.currentTarget.setPointerCapture(event.pointerId);
+        } catch {
+          // Ignore if capture is unsupported
+        }
+      }
     }
+
+    if (start.lockedAxis === 'x' && !prefersReducedMotion) {
+      setDragOffsetX(dx * 0.65);
+    }
+  };
+
+  const finishPointerSwipe = (event: React.PointerEvent<HTMLElement>) => {
+    const start = pointerStartRef.current;
+    if (!start || start.pointerId !== event.pointerId) return;
+    pointerStartRef.current = null;
+
+    if (start.lockedAxis === 'x') {
+      const dx = event.clientX - start.x;
+      const elapsedSec = Math.max((performance.now() - start.time) / 1000, 0.01);
+      const velocityX = dx / elapsedSec;
+
+      if (
+        Math.abs(dx) > SWIPE_DISTANCE_THRESHOLD ||
+        Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD
+      ) {
+        handleNext(dx < 0 ? 'left' : 'right');
+        return;
+      }
+    }
+
+    setDragOffsetX(0);
   };
 
   // Render at most 3 stacked cards at once starting from currentIndex
@@ -256,9 +310,6 @@ export function IdeaCardsBlock() {
                 aria-roledescription="carousel"
                 aria-label={`Starter project idea cards stack. Showing ${formatIdeaBadge(frontCard.number)}, card ${currentIndex + 1} of ${IDEA_CARDS.length}. Use Left and Right arrow keys to change cards.`}
                 onKeyDown={handleKeyDown}
-                onPointerDown={() => {
-                  stackRegionRef.current?.focus({ preventScroll: true });
-                }}
                 className="relative w-full min-h-[240px] sm:min-h-[260px] pr-4 pb-4 select-none focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1F4FE0]"
                 style={{
                   touchAction: 'pan-y',
@@ -266,103 +317,114 @@ export function IdeaCardsBlock() {
                   WebkitUserSelect: 'none',
                 }}
               >
-                <AnimatePresence initial={false} mode="popLayout">
-                  {visibleStack
-                    .map((card, stackIndex) => ({ card, stackIndex }))
-                    .reverse()
-                    .map(({ card, stackIndex }) => {
-                      const isFront = stackIndex === 0;
-                      const isHighlighted = highlightedNumber === card.number;
+                <LazyMotion features={domAnimation}>
+                  <AnimatePresence initial={false} mode="popLayout">
+                    {visibleStack
+                      .map((card, stackIndex) => ({ card, stackIndex }))
+                      .reverse()
+                      .map(({ card, stackIndex }) => {
+                        const isFront = stackIndex === 0;
+                        const isHighlighted = highlightedNumber === card.number;
 
-                      // Offset by ~8px per layer and rotated 1 to 2 degrees
-                      const targetX = stackIndex === 0 ? 0 : stackIndex * 8;
-                      const targetY = stackIndex === 0 ? 0 : stackIndex * 8;
-                      const targetRotate =
-                        stackIndex === 0 ? 0 : stackIndex === 1 ? 1.5 : -1.5;
+                        // Offset by ~8px per layer and rotated 1 to 2 degrees
+                        const targetX =
+                          stackIndex === 0 ? dragOffsetX : stackIndex * 8;
+                        const targetY = stackIndex === 0 ? 0 : stackIndex * 8;
+                        const targetRotate =
+                          stackIndex === 0 ? 0 : stackIndex === 1 ? 1.5 : -1.5;
 
-                      return (
-                        <motion.article
-                          key={card.number}
-                          drag={isFront ? 'x' : false}
-                          dragConstraints={{ left: 0, right: 0 }}
-                          dragElastic={0.65}
-                          onDragEnd={isFront ? handleDragEnd : undefined}
-                          aria-hidden={!isFront}
-                          initial={
-                            prefersReducedMotion
-                              ? false
-                              : {
-                                  opacity: 0,
-                                  x: 16,
-                                  y: 16,
-                                  rotate: -1.5,
-                                }
-                          }
-                          animate={{
-                            opacity: 1,
-                            x: targetX,
-                            y: targetY,
-                            rotate: targetRotate,
-                          }}
-                          exit={
-                            prefersReducedMotion
-                              ? { opacity: 0 }
-                              : {
-                                  opacity: 0,
-                                  x: exitDirection === 'left' ? -140 : 140,
-                                  rotate: exitDirection === 'left' ? -4 : 4,
-                                }
-                          }
-                          transition={transitionConfig}
-                          style={{
-                            zIndex: 30 - stackIndex * 10,
-                            touchAction: 'pan-y',
-                            userSelect: 'none',
-                            WebkitUserSelect: 'none',
-                          }}
-                          className={`${
-                            isFront
-                              ? 'relative cursor-grab active:cursor-grabbing'
-                              : 'absolute inset-0 right-4 bottom-4 pointer-events-none'
-                          } select-none w-full min-h-[220px] sm:min-h-[240px] flex flex-col justify-between p-6 sm:p-8 md:p-10 ${
-                            stackIndex === 1 ? 'bg-[#F4F0E6]' : 'bg-[#FFFFFF]'
-                          } text-[#111111] ${
-                            isFront && isHighlighted
-                              ? 'border-4 border-[#1F4FE0]'
-                              : 'border-2 border-[#111111]'
-                          }`}
-                        >
-                          <div className="space-y-4 select-none">
-                            <div className="flex items-center justify-between gap-3">
-                              <span
-                                className={`font-pixel text-xs sm:text-sm px-2.5 py-1 border border-[#111111] ${
-                                  isFront && isHighlighted
-                                    ? 'bg-[#1F4FE0] text-[#F4F0E6]'
-                                    : 'bg-[#F5A623] text-[#111111]'
-                                }`}
-                              >
-                                {formatIdeaBadge(card.number)}
-                              </span>
-
-                              {isFront && isHighlighted && (
-                                <span className="font-pixel text-[11px] uppercase tracking-wider text-[#1F4FE0]">
-                                  Random Pick
+                        return (
+                          <m.article
+                            key={card.number}
+                            onPointerDown={
+                              isFront ? handleCardPointerDown : undefined
+                            }
+                            onPointerMove={
+                              isFront ? handleCardPointerMove : undefined
+                            }
+                            onPointerUp={
+                              isFront ? finishPointerSwipe : undefined
+                            }
+                            onPointerCancel={
+                              isFront ? finishPointerSwipe : undefined
+                            }
+                            aria-hidden={!isFront}
+                            initial={
+                              prefersReducedMotion
+                                ? false
+                                : {
+                                    opacity: 0,
+                                    x: 16,
+                                    y: 16,
+                                    rotate: -1.5,
+                                  }
+                            }
+                            animate={{
+                              opacity: 1,
+                              x: targetX,
+                              y: targetY,
+                              rotate: targetRotate,
+                            }}
+                            exit={
+                              prefersReducedMotion
+                                ? { opacity: 0 }
+                                : {
+                                    opacity: 0,
+                                    x: exitDirection === 'left' ? -140 : 140,
+                                    rotate: exitDirection === 'left' ? -4 : 4,
+                                  }
+                            }
+                            transition={transitionConfig}
+                            style={{
+                              zIndex: 30 - stackIndex * 10,
+                              touchAction: 'pan-y',
+                              userSelect: 'none',
+                              WebkitUserSelect: 'none',
+                            }}
+                            className={`${
+                              isFront
+                                ? 'relative cursor-grab active:cursor-grabbing'
+                                : 'absolute inset-0 right-4 bottom-4 pointer-events-none'
+                            } select-none w-full min-h-[220px] sm:min-h-[240px] flex flex-col justify-between p-6 sm:p-8 md:p-10 ${
+                              stackIndex === 1 ? 'bg-[#F4F0E6]' : 'bg-[#FFFFFF]'
+                            } text-[#111111] ${
+                              isFront && isHighlighted
+                                ? 'border-4 border-[#1F4FE0]'
+                                : 'border-2 border-[#111111]'
+                            }`}
+                          >
+                            <div className="space-y-4 select-none">
+                              <div className="flex items-center justify-between gap-3">
+                                <span
+                                  className={`font-pixel text-xs sm:text-sm px-2.5 py-1 border border-[#111111] ${
+                                    isFront && isHighlighted
+                                      ? 'bg-[#1F4FE0] text-[#F4F0E6]'
+                                      : 'bg-[#F5A623] text-[#111111]'
+                                  }`}
+                                >
+                                  {formatIdeaBadge(card.number)}
                                 </span>
-                              )}
+
+                                {isFront && isHighlighted && (
+                                  <span className="font-pixel text-[11px] uppercase tracking-wider text-[#1F4FE0]">
+                                    Random Pick
+                                  </span>
+                                )}
+                              </div>
+
+                              <h4 className="font-body font-bold text-2xl sm:text-3xl text-[#111111] leading-tight">
+                                {card.title}
+                              </h4>
+
+                              <p className="font-body text-base sm:text-lg md:text-xl text-[#111111]/90 leading-relaxed">
+                                {card.description}
+                              </p>
                             </div>
-
-                            <h4 className="font-body font-bold text-2xl sm:text-3xl text-[#111111] leading-tight">
-                              {card.title}
-                            </h4>
-
-                            <p className="font-body text-base sm:text-lg md:text-xl text-[#111111]/90 leading-relaxed">
-                              {card.description}
-                            </p>
-                          </div>
-                        </motion.article>
-                      );
-                    })}
-                </AnimatePresence>
+                          </m.article>
+                        );
+                      })}
+                  </AnimatePresence>
+                </LazyMotion>
               </div>
 
               {/* Controls Row: Previous, Counter ("3 of 10") + First-Time Hint, Next */}

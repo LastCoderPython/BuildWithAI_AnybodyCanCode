@@ -3,8 +3,12 @@
 // ============================================================================
 const CONFIG = {
   EVENT_DATE_TEXT:
-    "Day 1: Thursday, 12 November 2026 (tentative) | Day 2: date to be announced",
-  EVENT_DATE_ISO: "2026-11-12T10:00:00+05:30",
+    "Day 1: Date to be announced | Day 2: Date to be announced",
+  EVENT_DATE_ISO: "",
+  DAY_1_DATE: "TBA",
+  DAY_1_TIME: "Time: TBA",
+  DAY_2_DATE: "Date to be announced",
+  SCHEDULE_NOTE: "Dates and timings will be announced soon. Follow for updates.",
   VENUE: "BSSRV Campus, Golaghat, Assam (exact hall to be announced)",
   MAP_URL: "https://maps.app.goo.gl/EoRmF95gZaxbuRg86",
   REGISTRATION_URL: "", // If empty, shows disabled "Registration opens soon" button (and "Follow for updates" in Hero); if filled, shows active "Register now" button opening in a new tab
@@ -61,23 +65,30 @@ const CONFIG = {
 };
 
 import React from 'react';
-import {
-  ArrowUpRight,
-  Clock,
-  Mail,
-  MapPin,
-  Share2,
-} from 'lucide-react';
+import Image from 'next/image';
+import dynamic from 'next/dynamic';
+import ArrowUpRight from 'lucide-react/dist/esm/icons/arrow-up-right';
+import Clock from 'lucide-react/dist/esm/icons/clock';
+import Mail from 'lucide-react/dist/esm/icons/mail';
+import MapPin from 'lucide-react/dist/esm/icons/map-pin';
+import Share2 from 'lucide-react/dist/esm/icons/share-2';
 import { CountdownTimer } from '@/components/CountdownTimer';
-import { FaqAccordion, type FaqItem } from '@/components/FaqAccordion';
+import type { FaqItem } from '@/components/FaqAccordion';
 import { SiteHeader } from '@/components/SiteHeader';
-import { IdeaCardsBlock } from '@/components/IdeaCardsBlock';
 import {
   FadeUpBlock,
   HeroArtwork,
   SpeakerAvatar,
   WhoItsForCard,
 } from '@/components/EventMotion';
+
+const IdeaCardsBlock = dynamic(() =>
+  import('@/components/IdeaCardsBlock').then((mod) => mod.IdeaCardsBlock)
+);
+
+const FaqAccordion = dynamic(() =>
+  import('@/components/FaqAccordion').then((mod) => mod.FaqAccordion)
+);
 
 // ============================================================================
 // Simplified Section Rule: Single thin colour bar above each section heading
@@ -284,7 +295,7 @@ const DAY_1_SCHEDULE = [
   },
   {
     step: '06',
-    title: 'Build time (submissions close 2:15 PM)',
+    title: 'Build time (submission deadline announced on the day)',
     accent: '#F5A623',
   },
   {
@@ -410,34 +421,43 @@ export default function EventPage() {
     line.trim()
   );
 
-  // Structured data for SEO (Event + FAQPage)
+  const hasEventDate = Boolean(
+    CONFIG.EVENT_DATE_ISO && CONFIG.EVENT_DATE_ISO.trim().length > 0
+  );
+
+  // Structured data for SEO (FAQPage + EducationEvent only when a startDate is set)
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
-      {
-        '@type': 'EducationEvent',
-        name: 'Build with AI: Anybody Can Code',
-        description:
-          'A free, beginner-friendly two-part workshop at Birangana Sati Sadhani Rajyik Vishwavidyalaya (BSSRV), Golaghat, Assam.',
-        startDate: CONFIG.EVENT_DATE_ISO,
-        eventStatus: 'https://schema.org/EventScheduled',
-        eventAttendanceMode: 'https://schema.org/MixedEventAttendanceMode',
-        isAccessibleForFree: true,
-        location: {
-          '@type': 'Place',
-          name: CONFIG.VENUE,
-          address: {
-            '@type': 'PostalAddress',
-            addressLocality: 'Golaghat',
-            addressRegion: 'Assam',
-            addressCountry: 'IN',
-          },
-        },
-        organizer: {
-          '@type': 'Organization',
-          name: 'B.Tech 3rd & 5th semester students of BSSRV',
-        },
-      },
+      ...(hasEventDate
+        ? [
+            {
+              '@type': 'EducationEvent',
+              name: 'Build with AI: Anybody Can Code',
+              description:
+                'A free, beginner-friendly two-part workshop at Birangana Sati Sadhani Rajyik Vishwavidyalaya (BSSRV), Golaghat, Assam.',
+              startDate: CONFIG.EVENT_DATE_ISO,
+              eventStatus: 'https://schema.org/EventScheduled',
+              eventAttendanceMode:
+                'https://schema.org/MixedEventAttendanceMode',
+              isAccessibleForFree: true,
+              location: {
+                '@type': 'Place',
+                name: CONFIG.VENUE,
+                address: {
+                  '@type': 'PostalAddress',
+                  addressLocality: 'Golaghat',
+                  addressRegion: 'Assam',
+                  addressCountry: 'IN',
+                },
+              },
+              organizer: {
+                '@type': 'Organization',
+                name: 'B.Tech 3rd & 5th semester students of BSSRV',
+              },
+            },
+          ]
+        : []),
       {
         '@type': 'FAQPage',
         mainEntity: FAQ_ITEMS.map((item) => ({
@@ -630,13 +650,15 @@ export default function EventPage() {
         <div className="w-full h-1.5 bg-[#111111]" aria-hidden="true" />
 
         {/* ===================================================================
-            SECTION 2 & 3 BAND: SUPPORTED BY STRIP + COMPACT COUNTDOWN ROW
+            SECTION 2 & 3 BAND: SUPPORTED BY STRIP + CONDITIONAL COUNTDOWN ROW
             =================================================================== */}
         <div className="w-full bg-[#F4F0E6] pt-6 md:pt-10">
           <section
             id="supported-by"
             aria-label="Supported by"
-            className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-10 pb-5 md:pb-6"
+            className={`max-w-[1200px] mx-auto px-4 sm:px-6 md:px-10 ${
+              hasEventDate ? 'pb-5 md:pb-6' : 'pb-6 md:pb-10'
+            }`}
           >
             {/* Centred Supported by strip with equal-size logo tiles and no empty space on the right */}
             <div className="border-2 border-[#111111] bg-[#F4F0E6] px-5 py-4 sm:px-8 sm:py-5 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-5 sm:gap-10">
@@ -660,10 +682,18 @@ export default function EventPage() {
                           isUnstop ? 'partner-logo-tile' : 'keploy-logo-tile'
                         }
                       >
-                        <img
+                        <Image
                           src={getPartnerLogoSrc(partner)}
                           alt={`${partner.name} logo`}
-                          decoding="async"
+                          width={isUnstop ? 2000 : 654}
+                          height={isUnstop ? 796 : 211}
+                          loading="lazy"
+                          quality={75}
+                          sizes={
+                            isUnstop
+                              ? '(max-width: 767px) 120px, (max-width: 1279px) 14vw, 160px'
+                              : '(max-width: 767px) 140px, (max-width: 1279px) 16vw, 180px'
+                          }
                           referrerPolicy="no-referrer"
                           className={
                             isUnstop ? 'unstop-logo-img' : 'keploy-logo-img'
@@ -680,14 +710,16 @@ export default function EventPage() {
             </div>
           </section>
 
-          <section
-            id="countdown"
-            className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-10 pb-6 md:pb-12"
-          >
-            <FadeUpBlock>
-              <CountdownTimer eventDateIso={CONFIG.EVENT_DATE_ISO} />
-            </FadeUpBlock>
-          </section>
+          {hasEventDate && (
+            <section
+              id="countdown"
+              className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-10 pb-6 md:pb-12"
+            >
+              <FadeUpBlock>
+                <CountdownTimer eventDateIso={CONFIG.EVENT_DATE_ISO} />
+              </FadeUpBlock>
+            </section>
+          )}
         </div>
 
         {/* ===================================================================
@@ -959,13 +991,13 @@ export default function EventPage() {
                 <span className="font-pixel text-[#1FAA59]">.</span>
               </h2>
 
-              <div className="inline-flex items-center gap-2 border border-[#111111] md:border-0 bg-[#F5A623] px-3.5 py-1.5 self-start sm:self-auto shrink-0">
+              <div className="inline-flex items-center gap-2 border border-[#111111] md:border-0 bg-[#F5A623] px-3.5 py-1.5 self-start sm:self-auto">
                 <Clock
                   className="w-4 h-4 text-[#111111] shrink-0"
                   aria-hidden="true"
                 />
-                <span className="font-body text-sm md:text-base font-semibold text-[#111111] whitespace-nowrap">
-                  Final timings to be confirmed.
+                <span className="font-body text-sm md:text-base font-semibold text-[#111111]">
+                  {CONFIG.SCHEDULE_NOTE}
                 </span>
               </div>
             </FadeUpBlock>
@@ -979,11 +1011,11 @@ export default function EventPage() {
                       Day 1
                     </span>
                     <h3 className="font-body font-bold text-lg sm:text-xl md:text-2xl mt-1">
-                      Thursday, 12 November 2026 (tentative)
+                      {CONFIG.DAY_1_DATE}
                     </h3>
                   </div>
                   <span className="font-body text-xs sm:text-sm font-semibold bg-[#1F4FE0] text-[#F4F0E6] px-3.5 py-1.5 border border-[#F4F0E6] md:border-0 self-start sm:self-auto whitespace-nowrap shrink-0 tabular-nums">
-                    10:00 AM to 3:30 PM
+                    {CONFIG.DAY_1_TIME}
                   </span>
                 </div>
 
@@ -1014,14 +1046,14 @@ export default function EventPage() {
                 </ol>
               </div>
 
-              {/* Part 2: Day 2 ("Date to be confirmed" shown once, no repeated "Final timings" footer) */}
+              {/* Part 2: Day 2 */}
               <div className="md:col-span-5 lg:col-span-4 border-2 border-[#111111] md:border-0 bg-[#F4F0E6] flex flex-col justify-between">
                 <div className="bg-[#1FAA59] text-[#111111] p-5 md:p-6 border-b-2 border-[#111111] md:border-b-0">
                   <span className="font-pixel text-xs uppercase text-[#111111] block">
                     Day 2
                   </span>
                   <h3 className="font-body font-bold text-lg sm:text-xl md:text-2xl mt-1">
-                    Date to be confirmed
+                    {CONFIG.DAY_2_DATE}
                   </h3>
                 </div>
 
@@ -1269,12 +1301,14 @@ export default function EventPage() {
                                 aria-label={`${speaker.name} on LinkedIn`}
                                 className="inline-flex items-center gap-2 min-w-[44px] min-h-[44px] px-3 py-2 border border-[#111111] md:border-[#111111]/25 bg-[#F4F0E6] hover:bg-[#F5A623]/25 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F4FE0]"
                               >
-                                <img
+                                <Image
                                   src="/linkedin-icon.svg"
                                   alt={`${speaker.name} on LinkedIn`}
                                   width={20}
                                   height={20}
-                                  decoding="async"
+                                  loading="lazy"
+                                  sizes="20px"
+                                  referrerPolicy="no-referrer"
                                   className="w-5 h-5 block shrink-0"
                                 />
                                 <span className="font-body font-semibold text-sm text-[#111111]">
@@ -1475,7 +1509,7 @@ export default function EventPage() {
             {/* Bottom Disclaimer Line */}
             <div className="pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-sm md:text-base text-[#F4F0E6]/90">
               <p className="font-semibold text-[#F5A623]">
-                This is an independent student-organised event.
+                This is a student-organised event.
               </p>
               <p>
                 Birangana Sati Sadhani Rajyik Vishwavidyalaya (BSSRV), Golaghat,
