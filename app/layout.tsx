@@ -5,6 +5,7 @@ import {
   Space_Grotesk,
   Silkscreen,
 } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 
 const pinyonScript = Pinyon_Script({
@@ -80,6 +81,7 @@ export default function RootLayout({
         className="min-h-screen bg-[#F4F0E6] text-[#111111] font-body antialiased selection:bg-[#F5A623] selection:text-[#111111]"
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );
