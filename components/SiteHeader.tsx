@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import {
   AnimatePresence,
   LazyMotion,
@@ -16,7 +15,6 @@ import X from 'lucide-react/dist/esm/icons/x';
 interface SiteHeaderProps {
   registrationUrl: string;
   instagramUrl: string;
-  unstopUrl?: string;
 }
 
 const NAV_LINKS = [
@@ -36,7 +34,6 @@ function hasValidUrl(value?: string) {
 export function SiteHeader({
   registrationUrl,
   instagramUrl,
-  unstopUrl = 'https://unstop.com/o/VLHnABy?lb=QpoGU3DZ',
 }: SiteHeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const prefersReducedMotion = useReducedMotion();
@@ -118,15 +115,15 @@ export function SiteHeader({
         ref={headerRef}
         className="sticky top-0 z-50 w-full bg-[#F4F0E6] border-b border-[#111111]"
       >
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-10 min-h-14 py-1.5 flex items-center justify-between gap-2 sm:gap-4 lg:gap-6">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-10 h-14 flex items-center justify-between gap-4 lg:gap-6">
           {/* Zone 1: Brand Title — "Build with AI" on mobile & compact tablet, full title on large screens */}
           <a
             href="#top"
             onClick={() => setIsOpen(false)}
             className="font-display text-sm sm:text-base tracking-tight text-[#111111] whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F4FE0]"
           >
-            <span className="xl:hidden">Build with AI</span>
-            <span className="hidden xl:inline">
+            <span className="lg:hidden">Build with AI</span>
+            <span className="hidden lg:inline">
               Build with AI: Anybody Can Code
             </span>
           </a>
@@ -134,7 +131,7 @@ export function SiteHeader({
           {/* Zone 2: Desktop single-line navigation links */}
           <nav
             aria-label="Primary navigation"
-            className="hidden md:flex items-center gap-4 lg:gap-6 text-sm font-medium text-[#111111]"
+            className="hidden md:flex items-center gap-5 lg:gap-7 text-sm font-medium text-[#111111]"
           >
             {NAV_LINKS.map((link) => (
               <a
@@ -148,33 +145,8 @@ export function SiteHeader({
             ))}
           </nav>
 
-          {/* Right Group: "Powered by [Unstop logo]" lockup + Desktop CTA / Mobile Hamburger */}
-          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 shrink-0">
-            {/* "Powered by [Unstop logo]" lockup (>=80px wide with clear space, unaltered, linking to Unstop) */}
-            <a
-              href={unstopUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Powered by Unstop"
-              className="inline-flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 text-[#111111] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F4FE0] shrink-0"
-            >
-              <span className="font-body text-[10px] sm:text-xs font-medium text-[#111111] whitespace-nowrap leading-none">
-                Powered by
-              </span>
-              <span className="header-unstop-tile">
-                <Image
-                  src="/assets/aistudio/Unstop-Logo-Blue_4bf8af3f.svg"
-                  alt="Unstop logo"
-                  width={2000}
-                  height={796}
-                  loading="lazy"
-                  sizes="80px"
-                  referrerPolicy="no-referrer"
-                  className="header-unstop-logo-img"
-                />
-              </span>
-            </a>
-
+          {/* Zone 3: Desktop CTA / Mobile Hamburger */}
+          <div className="flex items-center shrink-0">
             {/* Zone 3 (Desktop only): Registration button linking to Unstop */}
             <div className="hidden md:flex items-center shrink-0">
               {!hasReg ? (
