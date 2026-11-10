@@ -59,11 +59,12 @@
   --keploy-logo-width: clamp(140px, 16vw, 180px);
   --partner-logo-height: calc(var(--unstop-logo-width) * 0.398);
   --logo-clear-space: calc(var(--partner-logo-height) * 0.5);
-  width: calc(var(--keploy-logo-width) + (var(--logo-clear-space) * 2));
+  width: calc(var(--keploy-logo-width) + (var(--logo-clear-space) * 2) + 2px);
   max-width: 100%;
-  height: calc(var(--partner-logo-height) + (var(--logo-clear-space) * 2));
+  height: calc(var(--partner-logo-height) + (var(--logo-clear-space) * 2) + 2px);
   padding: var(--logo-clear-space);
   background-color: #ffffff;
+  border: 1px solid #111111;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -80,6 +81,25 @@
 .keploy-logo-img {
   width: clamp(140px, 16vw, 180px);
   min-width: 100px;
+  height: auto;
+  display: block;
+}
+
+.header-unstop-tile {
+  --header-unstop-width: 80px;
+  --header-unstop-height: calc(var(--header-unstop-width) * 0.398);
+  --header-unstop-clear-space: calc(var(--header-unstop-height) * 0.5);
+  padding: var(--header-unstop-clear-space);
+  background-color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.header-unstop-logo-img {
+  width: 80px;
+  min-width: 80px;
   height: auto;
   display: block;
 }

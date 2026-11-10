@@ -3,26 +3,26 @@
 // ============================================================================
 const CONFIG = {
   EVENT_DATE_TEXT:
-    "Day 1: Date to be announced | Day 2: Date to be announced",
-  EVENT_DATE_ISO: "",
-  DAY_1_DATE: "TBA",
+    "Day 1: Friday, 13 November 2026 | Day 2: Date to be announced",
+  EVENT_DATE_ISO: "2026-11-13T10:00:00+05:30",
+  DAY_1_DATE: "Friday, 13 November 2026",
   DAY_1_TIME: "Time: TBA",
   DAY_2_DATE: "Date to be announced",
-  SCHEDULE_NOTE: "Dates and timings will be announced soon. Follow for updates.",
+  SCHEDULE_NOTE: "Final timings and Day 2 date will be announced soon.",
   VENUE: "BSSRV Campus, Golaghat, Assam (exact hall to be announced)",
   MAP_URL: "https://maps.app.goo.gl/EoRmF95gZaxbuRg86",
-  REGISTRATION_URL: "", // If empty, shows disabled "Registration opens soon" button (and "Follow for updates" in Hero); if filled, shows active "Register now" button opening in a new tab
+  REGISTRATION_URL: "https://unstop.com/o/VLHnABy?lb=QpoGU3DZ", // If empty, shows disabled "Registration opens soon" button (and "Follow for updates" in Hero); if filled, shows active "Register now" button opening in a new tab
   CONTACT_EMAIL: "roboticsclub.bssrv@gmail.com",
   INSTAGRAM_URL: "https://www.instagram.com/roboticsclub.bssrv/",
   DEPARTMENT_NAME: "Faculty of Engineering & Technology",
   SPEAKERS: [
     {
-      name: "[Speaker name]",
-      org: "[organisation]",
-      topic: "Day 1: guided bootcamp (subject to final confirmation)",
-      photo: "",
-      initials: "D1",
-      linkedin: "",
+      name: "Shayan Dutta",
+      org: "inteligenAI",
+      topic: "Day 1: Building with AI: From Ideas to Impact, virtual session",
+      photo: "/assets/aistudio/shayan-dutta.webp",
+      initials: "SD",
+      linkedin: "https://www.linkedin.com/in/shayandutta10/",
     },
     {
       name: "Amaan Bhati",
@@ -44,9 +44,9 @@ const CONFIG = {
   PARTNERS: [
     {
       name: "Unstop",
-      role: "Platform Partner",
+      role: "Powered by",
       logo: "/assets/aistudio/Unstop-Logo-Blue_4bf8af3f.svg",
-      url: "https://unstop.com/",
+      url: "https://unstop.com/o/VLHnABy?lb=QpoGU3DZ",
     },
     {
       name: "Keploy",
@@ -280,7 +280,7 @@ const DAY_1_SCHEDULE = [
   },
   {
     step: '03',
-    title: 'Guided bootcamp led by the speaker',
+    title: 'Virtual session: Building with AI: From Ideas to Impact',
     accent: '#1FAA59',
   },
   {
@@ -428,18 +428,51 @@ export default function EventPage() {
     CONFIG.EVENT_DATE_ISO && CONFIG.EVENT_DATE_ISO.trim().length > 0
   );
 
-  // Structured data for SEO (FAQPage only while dates are TBA; no Event schema or date fields)
+  // Structured data for SEO (FAQPage + EducationEvent when startDate is set)
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: FAQ_ITEMS.map((item) => ({
-      '@type': 'Question',
-      name: item.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: item.answer,
+    '@graph': [
+      ...(hasEventDate
+        ? [
+            {
+              '@type': 'EducationEvent',
+              name: 'Build with AI: Anybody Can Code',
+              description:
+                'A free, beginner-friendly AI workshop for BSSRV students. Build a working project with AI tools.',
+              startDate: CONFIG.EVENT_DATE_ISO,
+              eventStatus: 'https://schema.org/EventScheduled',
+              eventAttendanceMode:
+                'https://schema.org/MixedEventAttendanceMode',
+              isAccessibleForFree: true,
+              location: {
+                '@type': 'Place',
+                name: CONFIG.VENUE,
+                address: {
+                  '@type': 'PostalAddress',
+                  addressLocality: 'Golaghat',
+                  addressRegion: 'Assam',
+                  addressCountry: 'IN',
+                },
+              },
+              organizer: {
+                '@type': 'Organization',
+                name: 'B.Tech 3rd & 5th semester students of BSSRV',
+              },
+            },
+          ]
+        : []),
+      {
+        '@type': 'FAQPage',
+        mainEntity: FAQ_ITEMS.map((item) => ({
+          '@type': 'Question',
+          name: item.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: item.answer,
+          },
+        })),
       },
-    })),
+    ],
   };
 
   const isPlaceholder = (value?: string) =>
@@ -630,8 +663,9 @@ export default function EventPage() {
                 Quick facts:
               </strong>{' '}
               Free entry; open to all BSSRV branches and departments; beginners
-              welcome; individuals or teams of up to 3; Day 1 in person, Day 2
-              virtual; dates to be announced; BSSRV Campus, Golaghat, Assam.
+              welcome; individuals or teams of up to 3; Day 1 in person (Friday,
+              13 November 2026), Day 2 virtual (date to be announced); BSSRV
+              Campus, Golaghat, Assam.
             </p>
           </div>
 
@@ -642,13 +676,19 @@ export default function EventPage() {
               hasEventDate ? 'pb-5 md:pb-6' : 'pb-6 md:pb-10'
             }`}
           >
-            {/* Centred Supported by strip with equal-size logo tiles and no empty space on the right */}
-            <div className="border-2 border-[#111111] bg-[#F4F0E6] px-5 py-4 sm:px-8 sm:py-5 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-5 sm:gap-10">
-              <span className="font-pixel text-xs uppercase tracking-wider text-[#111111] shrink-0">
-                Supported by
-              </span>
+            {/* Centred Supported by strip with equal-size logo tiles and aligned top labels */}
+            <div className="border-2 border-[#111111] bg-[#F4F0E6] px-5 py-5 sm:px-8 sm:py-6 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-5 sm:gap-8 md:gap-10">
+              <div className="flex items-center gap-2.5 sm:pr-8 sm:border-r sm:border-[#111111]/20 shrink-0">
+                <span
+                  className="w-2.5 h-2.5 bg-[#1F4FE0] border border-[#111111] shrink-0"
+                  aria-hidden="true"
+                />
+                <span className="font-pixel text-xs uppercase tracking-wider text-[#111111]">
+                  Supported by
+                </span>
+              </div>
 
-              <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-6 sm:gap-10">
+              <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-10">
                 {CONFIG.PARTNERS.map((partner) => {
                   const isUnstop = partner.name === 'Unstop';
                   return (
@@ -659,6 +699,9 @@ export default function EventPage() {
                       rel="noopener noreferrer"
                       className="inline-flex flex-col items-center text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F4FE0]"
                     >
+                      <span className="mb-2 font-body text-xs sm:text-sm font-semibold text-[#111111]">
+                        {partner.role}
+                      </span>
                       <div
                         className={
                           isUnstop ? 'partner-logo-tile' : 'keploy-logo-tile'
@@ -682,9 +725,6 @@ export default function EventPage() {
                           }
                         />
                       </div>
-                      <span className="mt-2 font-body text-xs font-medium text-[#111111]">
-                        {partner.role}
-                      </span>
                     </a>
                   );
                 })}

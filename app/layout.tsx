@@ -42,7 +42,7 @@ const silkscreen = Silkscreen({
 
 const SITE_TITLE = 'Build with AI: Anybody Can Code | BSSRV Golaghat';
 const SITE_DESCRIPTION =
-  'A free, beginner-friendly AI workshop for BSSRV students. Build a working project with AI tools. Dates to be announced.';
+  'A free, beginner-friendly AI workshop for BSSRV students. Build a working project with AI tools. Day 1: Friday, 13 November 2026.';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.buildwai.tech'),
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Build with AI: Anybody Can Code — Free, Open to all branches, Dates to be announced',
+        alt: 'Build with AI: Anybody Can Code — Day 1: Friday, 13 November 2026 at BSSRV Golaghat',
       },
     ],
   },

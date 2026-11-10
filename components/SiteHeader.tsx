@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import {
   AnimatePresence,
   LazyMotion,
@@ -15,6 +16,7 @@ import X from 'lucide-react/dist/esm/icons/x';
 interface SiteHeaderProps {
   registrationUrl: string;
   instagramUrl: string;
+  unstopUrl?: string;
 }
 
 const NAV_LINKS = [
@@ -31,7 +33,11 @@ function hasValidUrl(value?: string) {
   );
 }
 
-export function SiteHeader({ registrationUrl, instagramUrl }: SiteHeaderProps) {
+export function SiteHeader({
+  registrationUrl,
+  instagramUrl,
+  unstopUrl = 'https://unstop.com/o/VLHnABy?lb=QpoGU3DZ',
+}: SiteHeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const toggleBtnRef = useRef<HTMLButtonElement>(null);
@@ -112,15 +118,15 @@ export function SiteHeader({ registrationUrl, instagramUrl }: SiteHeaderProps) {
         ref={headerRef}
         className="sticky top-0 z-50 w-full bg-[#F4F0E6] border-b border-[#111111]"
       >
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-10 h-14 flex items-center justify-between gap-3 sm:gap-8">
-          {/* Zone 1: Brand Title — "Build with AI" on mobile (no truncation), full title on desktop */}
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-10 min-h-14 py-1.5 flex items-center justify-between gap-2 sm:gap-4 lg:gap-6">
+          {/* Zone 1: Brand Title — "Build with AI" on mobile & compact tablet, full title on large screens */}
           <a
             href="#top"
             onClick={() => setIsOpen(false)}
-            className="font-display text-base tracking-tight text-[#111111] whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F4FE0]"
+            className="font-display text-sm sm:text-base tracking-tight text-[#111111] whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F4FE0]"
           >
-            <span className="md:hidden">Build with AI</span>
-            <span className="hidden md:inline">
+            <span className="xl:hidden">Build with AI</span>
+            <span className="hidden xl:inline">
               Build with AI: Anybody Can Code
             </span>
           </a>
@@ -128,7 +134,7 @@ export function SiteHeader({ registrationUrl, instagramUrl }: SiteHeaderProps) {
           {/* Zone 2: Desktop single-line navigation links */}
           <nav
             aria-label="Primary navigation"
-            className="hidden md:flex items-center gap-6 text-sm font-medium text-[#111111]"
+            className="hidden md:flex items-center gap-4 lg:gap-6 text-sm font-medium text-[#111111]"
           >
             {NAV_LINKS.map((link) => (
               <a
@@ -142,50 +148,78 @@ export function SiteHeader({ registrationUrl, instagramUrl }: SiteHeaderProps) {
             ))}
           </nav>
 
-          {/* Zone 3 (Desktop only): Small secondary registration button */}
-          <div className="hidden md:flex items-center shrink-0">
-            {!hasReg ? (
-              <button
-                type="button"
-                disabled
-                aria-disabled="true"
-                className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 border border-[#111111]/50 bg-[#F4F0E6] text-[#111111]/70 font-body font-medium text-xs sm:text-sm cursor-not-allowed select-none whitespace-nowrap shrink-0"
-              >
-                <span className="inline-block w-2 h-2 bg-[#F5A623] border border-[#111111] shrink-0" />
-                <span>Registration opens soon</span>
-              </button>
-            ) : (
-              <a
-                href={registrationUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 border border-[#111111] bg-[#F4F0E6] hover:bg-[#F5A623] text-[#111111] transition-colors duration-150 font-body font-semibold text-xs sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F4FE0] whitespace-nowrap shrink-0"
-              >
-                <span>Register now</span>
-                <ArrowUpRight
-                  className="w-3.5 h-3.5 shrink-0"
-                  aria-hidden="true"
+          {/* Right Group: "Powered by [Unstop logo]" lockup + Desktop CTA / Mobile Hamburger */}
+          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 shrink-0">
+            {/* "Powered by [Unstop logo]" lockup (>=80px wide with clear space, unaltered, linking to Unstop) */}
+            <a
+              href={unstopUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Powered by Unstop"
+              className="inline-flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2 text-[#111111] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F4FE0] shrink-0"
+            >
+              <span className="font-body text-[10px] sm:text-xs font-medium text-[#111111] whitespace-nowrap leading-none">
+                Powered by
+              </span>
+              <span className="header-unstop-tile">
+                <Image
+                  src="/assets/aistudio/Unstop-Logo-Blue_4bf8af3f.svg"
+                  alt="Unstop logo"
+                  width={2000}
+                  height={796}
+                  loading="lazy"
+                  sizes="80px"
+                  referrerPolicy="no-referrer"
+                  className="header-unstop-logo-img"
                 />
-              </a>
-            )}
-          </div>
+              </span>
+            </a>
 
-          {/* Zone 3 (Mobile only, < 768px): 44x44px Hamburger button */}
-          <button
-            ref={toggleBtnRef}
-            type="button"
-            aria-label="Open menu"
-            aria-expanded={isOpen}
-            aria-controls="mobile-nav-menu"
-            onClick={() => setIsOpen((prev) => !prev)}
-            className="md:hidden inline-flex items-center justify-center w-11 h-11 min-w-[44px] min-h-[44px] border-2 border-[#111111] bg-[#F4F0E6] text-[#111111] hover:bg-[#F5A623] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F4FE0] shrink-0"
-          >
-            {isOpen ? (
-              <X className="w-5 h-5" aria-hidden="true" />
-            ) : (
-              <Menu className="w-5 h-5" aria-hidden="true" />
-            )}
-          </button>
+            {/* Zone 3 (Desktop only): Registration button linking to Unstop */}
+            <div className="hidden md:flex items-center shrink-0">
+              {!hasReg ? (
+                <button
+                  type="button"
+                  disabled
+                  aria-disabled="true"
+                  className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 border border-[#111111]/50 bg-[#F4F0E6] text-[#111111]/70 font-body font-medium text-xs sm:text-sm cursor-not-allowed select-none whitespace-nowrap shrink-0"
+                >
+                  <span className="inline-block w-2 h-2 bg-[#F5A623] border border-[#111111] shrink-0" />
+                  <span>Registration opens soon</span>
+                </button>
+              ) : (
+                <a
+                  href={registrationUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 border border-[#111111] bg-[#F4F0E6] hover:bg-[#F5A623] text-[#111111] transition-colors duration-150 font-body font-semibold text-xs sm:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F4FE0] whitespace-nowrap shrink-0"
+                >
+                  <span>Register now</span>
+                  <ArrowUpRight
+                    className="w-3.5 h-3.5 shrink-0"
+                    aria-hidden="true"
+                  />
+                </a>
+              )}
+            </div>
+
+            {/* Zone 3 (Mobile only, < 768px): 44x44px Hamburger button */}
+            <button
+              ref={toggleBtnRef}
+              type="button"
+              aria-label="Open menu"
+              aria-expanded={isOpen}
+              aria-controls="mobile-nav-menu"
+              onClick={() => setIsOpen((prev) => !prev)}
+              className="md:hidden inline-flex items-center justify-center w-11 h-11 min-w-[44px] min-h-[44px] border-2 border-[#111111] bg-[#F4F0E6] text-[#111111] hover:bg-[#F5A623] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F4FE0] shrink-0"
+            >
+              {isOpen ? (
+                <X className="w-5 h-5" aria-hidden="true" />
+              ) : (
+                <Menu className="w-5 h-5" aria-hidden="true" />
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Full-width mobile dropdown panel below the header */}
