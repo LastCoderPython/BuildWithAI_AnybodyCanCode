@@ -84,7 +84,7 @@ export function CountdownTimer({ eventDateIso }: { eventDateIso: string }) {
         </div>
       ) : countdown.isPast ? (
         <p className="font-display text-xl sm:text-2xl uppercase tracking-tight text-[#F5A623]">
-          See you next time
+          Day 1 is live
         </p>
       ) : (
         <div

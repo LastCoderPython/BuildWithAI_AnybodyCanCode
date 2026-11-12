@@ -3,23 +3,27 @@
 // ============================================================================
 const CONFIG = {
   EVENT_DATE_TEXT:
-    "Day 1: Friday, 13 November 2026 | Day 2: Date to be announced",
-  EVENT_DATE_ISO: "2026-11-13T10:00:00+05:30",
+    "Day 1: Friday, 13 November 2026 (9:30 AM start) | Day 2: Date to be announced",
+  EVENT_DATE_ISO: "2026-11-13T09:30:00+05:30",
   DAY_1_DATE: "Friday, 13 November 2026",
-  DAY_1_TIME: "Time: TBA",
+  DAY_1_TIME: "9:30 AM to 3:45 PM",
   DAY_2_DATE: "Date to be announced",
-  SCHEDULE_NOTE: "Final timings and Day 2 date will be announced soon.",
-  VENUE: "BSSRV Campus, Golaghat, Assam (exact hall to be announced)",
+  SCHEDULE_NOTE: "Day 2 date will be announced soon.",
+  VENUE:
+    "BSSRV Campus, Golaghat, Assam (B.Tech 1st Sem Room, Opp. to Lift, Academic Block)",
   MAP_URL: "https://maps.app.goo.gl/EoRmF95gZaxbuRg86",
   REGISTRATION_URL: "https://unstop.com/o/VLHnABy?lb=QpoGU3DZ", // If empty, shows disabled "Registration opens soon" button (and "Follow for updates" in Hero); if filled, shows active "Register now" button opening in a new tab
   CONTACT_EMAIL: "roboticsclub.bssrv@gmail.com",
+  CONTACT_PHONE: "+91 8099812242",
   INSTAGRAM_URL: "https://www.instagram.com/roboticsclub.bssrv/",
   DEPARTMENT_NAME: "Faculty of Engineering & Technology",
   SPEAKERS: [
     {
       name: "Shayan Dutta",
+      role: "Software Engineer (SDE-1)",
       org: "inteligenAI",
-      topic: "Day 1: Building with AI: From Ideas to Impact, virtual session",
+      topic:
+        "Day 1, 10:45 AM: Building with AI: From Ideas to Impact, virtual session",
       photo: "/assets/aistudio/shayan-dutta.webp",
       initials: "SD",
       linkedin: "https://www.linkedin.com/in/shayandutta10/",
@@ -35,6 +39,7 @@ const CONFIG = {
     },
   ] as Array<{
     name: string;
+    role?: string;
     org: string;
     topic: string;
     photo?: string;
@@ -71,6 +76,7 @@ import ArrowUpRight from 'lucide-react/dist/esm/icons/arrow-up-right';
 import Clock from 'lucide-react/dist/esm/icons/clock';
 import Mail from 'lucide-react/dist/esm/icons/mail';
 import MapPin from 'lucide-react/dist/esm/icons/map-pin';
+import Phone from 'lucide-react/dist/esm/icons/phone';
 import Share2 from 'lucide-react/dist/esm/icons/share-2';
 import { CountdownTimer } from '@/components/CountdownTimer';
 import type { FaqItem } from '@/components/FaqAccordion';
@@ -270,43 +276,34 @@ const THEME_CHIPS = [
 const DAY_1_SCHEDULE = [
   {
     step: '01',
-    title: 'Check-in and pairing',
+    title: '9:30 AM Check-in and pairing',
     accent: '#1F4FE0',
   },
   {
     step: '02',
-    title: 'Opening',
+    title: '10:15 AM Opening',
     accent: '#F5A623',
   },
   {
     step: '03',
-    title: 'Virtual session: Building with AI: From Ideas to Impact',
+    title:
+      '10:45 AM Virtual guest session: Building with AI: From Ideas to Impact (Shayan Dutta)',
     accent: '#1FAA59',
   },
   {
     step: '04',
-    title: 'Break',
+    title: '11:45 AM Pick your idea (choose and scope your project with a mentor)',
     accent: '#E8392D',
   },
   {
     step: '05',
-    title: 'Pick your idea (choose and scope your project with a mentor)',
+    title: '12:15 PM Build time',
     accent: '#1F4FE0',
   },
   {
     step: '06',
-    title: 'Build time (submission deadline announced on the day)',
+    title: '3:15 PM Wrap-up and project submission',
     accent: '#F5A623',
-  },
-  {
-    step: '07',
-    title: 'Demos and judging',
-    accent: '#1FAA59',
-  },
-  {
-    step: '08',
-    title: 'Results and closing',
-    accent: '#E8392D',
   },
 ];
 
@@ -315,16 +312,20 @@ const JUDGING_CRITERIA = [
   { label: 'Working demo', points: 25, color: '#1FAA59' },
   { label: 'Creativity', points: 15, color: '#F5A623' },
   { label: 'Effective use of AI tools', points: 15, color: '#E8392D' },
-  { label: 'Presentation', points: 15, color: '#1F4FE0' },
+  {
+    label: 'Presentation (clarity of your demo video)',
+    points: 15,
+    color: '#1F4FE0',
+  },
 ];
 
 const RECOGNITION_RULES = [
   {
-    text: 'Only the project built during the open build time is judged.',
+    text: 'Only the project built during the open build time and submitted by 3:15 PM on Day 1 is judged.',
     dot: '#1F4FE0',
   },
   {
-    text: 'The guided bootcamp build is for learning.',
+    text: 'Demo videos are submitted online by the deadline and must show the project submitted on Day 1.',
     dot: '#F5A623',
   },
   {
@@ -362,7 +363,7 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: 'What should I bring?',
     answer:
-      'Bring a laptop if you have one, and a Google account. Teams can share devices.',
+      'Bring a laptop if you have one, a charger, and a Google account. Teams can share devices.',
   },
   {
     question: 'Who can attend?',
@@ -372,7 +373,7 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: 'Is it a competition?',
     answer:
-      "It's a learning event. Everyone builds and shares, and a judging panel recognises the three best builds using published criteria.",
+      "It's a learning event. Everyone builds and shares, and a judging panel recognises the three best builds using published criteria. Judging happens online after Day 1.",
   },
   {
     question: 'Can I join alone?',
@@ -390,14 +391,17 @@ const FAQ_ITEMS: FaqItem[] = [
       'Projects must be safe and respectful: nothing harmful or misleading, and no collecting real personal data without consent.',
   },
   {
-    question: 'What is the guided bootcamp?',
-    answer:
-      'The guided bootcamp is a speaker-led, step-by-step build-along on Day 1 where everyone creates a small app together, with mentors helping.',
+    question: 'Is food provided?',
+    answer: 'Yes, refreshments are provided during the event.',
   },
   {
-    question: 'Is the bootcamp build judged?',
+    question: 'How do I submit my project and demo?',
     answer:
-      'No. Only the project you build in the open build time is judged.',
+      'Submit your project through the form shared on Day 1 by 3:15 PM. Then send a 2 to 3 minute demo video by 14th November.',
+  },
+  {
+    question: 'When will results be announced?',
+    answer: 'Online on 21st November.',
   },
   {
     question: 'Do I need a GitHub account?',
@@ -407,7 +411,7 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: 'How are the best builds chosen?',
     answer:
-      'The best builds are chosen by a judging panel using the criteria published on this page.',
+      'The best builds are chosen by a judging panel using the criteria published on this page. Judging happens online after Day 1.',
   },
   {
     question: 'Will there be certificates?',
@@ -664,8 +668,8 @@ export default function EventPage() {
               </strong>{' '}
               Free entry; open to all BSSRV branches and departments; beginners
               welcome; individuals or teams of up to 3; Day 1 in person (Friday,
-              13 November 2026), Day 2 virtual (date to be announced); BSSRV
-              Campus, Golaghat, Assam.
+              13 November 2026, 9:30 AM start), Day 2 virtual (date to be
+              announced); BSSRV Campus, Golaghat, Assam.
             </p>
           </div>
 
@@ -821,9 +825,9 @@ export default function EventPage() {
                       First-timers
                     </h3>
                     <p className="mt-2.5 text-sm sm:text-base md:text-base text-[#111111]/90 leading-relaxed">
-                      Never written a single line of code before? Follow the
-                      guided bootcamp step by step, then team up with a mentor
-                      to turn a simple idea into a working project.
+                      Never written a single line of code before? Attend the
+                      opening session, then team up with a mentor to turn a
+                      simple idea into a working project.
                     </p>
                   </div>
                   <p className="pt-3 border-t border-[#111111]/20 font-body text-sm md:text-base font-semibold text-[#1F4FE0]">
@@ -1066,31 +1070,60 @@ export default function EventPage() {
                     </li>
                   ))}
                 </ol>
+
+                <div className="px-4 py-3.5 sm:px-5 sm:py-4 border-t border-[#111111] md:border-[#111111]/15 bg-[#F4F0E6]">
+                  <p className="font-body text-sm sm:text-base font-medium text-[#111111]/90">
+                    Refreshments will be provided during the event.
+                  </p>
+                </div>
               </div>
 
-              {/* Part 2: Day 2 */}
-              <div className="md:col-span-5 lg:col-span-4 border-2 border-[#111111] md:border-0 bg-[#F4F0E6] flex flex-col justify-between">
-                <div className="bg-[#1FAA59] text-[#111111] p-5 md:p-6 border-b-2 border-[#111111] md:border-b-0">
-                  <span className="font-pixel text-xs uppercase text-[#111111] block">
-                    Day 2
-                  </span>
-                  <h3 className="font-body font-bold text-lg sm:text-xl md:text-2xl mt-1">
-                    {CONFIG.DAY_2_DATE}
-                  </h3>
+              {/* Part 2: After Day 1 (online) & Day 2 */}
+              <div className="md:col-span-5 lg:col-span-4 space-y-5 md:space-y-6">
+                {/* After Day 1 (online) */}
+                <div className="border-2 border-[#111111] md:border-0 bg-[#F4F0E6] flex flex-col justify-between">
+                  <div className="bg-[#1F4FE0] text-[#F4F0E6] p-5 md:p-6 border-b-2 border-[#111111] md:border-b-0">
+                    <span className="font-pixel text-xs uppercase text-[#F5A623] block">
+                      Online Judging &amp; Results
+                    </span>
+                    <h3 className="font-body font-bold text-lg sm:text-xl md:text-2xl mt-1">
+                      After Day 1 (online)
+                    </h3>
+                  </div>
+
+                  <div className="p-5 sm:p-6">
+                    <p className="text-sm sm:text-base md:text-base text-[#111111]/90 leading-relaxed">
+                      Demos and judging happen online after Day 1. Submit your
+                      demo video by 14th November. Results of the three best
+                      builds are announced online on 21st November.
+                    </p>
+                  </div>
                 </div>
 
-                <div className="p-5 sm:p-6 space-y-3">
-                  <span className="inline-block font-pixel text-xs uppercase bg-[#F5A623] text-[#111111] px-2.5 py-1 border border-[#111111] md:border-0">
-                    Virtual Session
-                  </span>
-                  <p className="font-body font-bold text-lg md:text-xl text-[#111111]">
-                    Virtual guest session on Open Source and GSoC
-                  </p>
-                  <p className="text-sm sm:text-base md:text-base text-[#111111]/90 leading-relaxed">
-                    Hosted online for registered participants. Joining
-                    instructions will be shared directly with registered
-                    attendees.
-                  </p>
+                {/* Day 2 */}
+                <div className="border-2 border-[#111111] md:border-0 bg-[#F4F0E6] flex flex-col justify-between">
+                  <div className="bg-[#1FAA59] text-[#111111] p-5 md:p-6 border-b-2 border-[#111111] md:border-b-0">
+                    <span className="font-pixel text-xs uppercase text-[#111111] block">
+                      Day 2
+                    </span>
+                    <h3 className="font-body font-bold text-lg sm:text-xl md:text-2xl mt-1">
+                      {CONFIG.DAY_2_DATE}
+                    </h3>
+                  </div>
+
+                  <div className="p-5 sm:p-6 space-y-3">
+                    <span className="inline-block font-pixel text-xs uppercase bg-[#F5A623] text-[#111111] px-2.5 py-1 border border-[#111111] md:border-0">
+                      Virtual Session
+                    </span>
+                    <p className="font-body font-bold text-lg md:text-xl text-[#111111]">
+                      Virtual guest session on Open Source and GSoC
+                    </p>
+                    <p className="text-sm sm:text-base md:text-base text-[#111111]/90 leading-relaxed">
+                      Hosted online for registered participants. Joining
+                      instructions will be shared directly with registered
+                      attendees.
+                    </p>
+                  </div>
                 </div>
               </div>
             </FadeUpBlock>
@@ -1296,6 +1329,11 @@ export default function EventPage() {
                                   <h3 className="font-body font-bold text-xl sm:text-2xl text-[#111111]">
                                     {speaker.name}
                                   </h3>
+                                  {speaker.role && (
+                                    <p className="font-body text-sm md:text-base font-medium text-[#111111]/85 mt-0.5">
+                                      {speaker.role}
+                                    </p>
+                                  )}
                                   {!isPlaceholder(speaker.org) && (
                                     <p className="font-body text-sm md:text-base font-semibold text-[#1F4FE0] mt-0.5">
                                       {speaker.org}
@@ -1375,7 +1413,7 @@ export default function EventPage() {
                 registered with, keep your microphone muted and camera off unless
                 invited, ask questions in the chat, and fill in the attendance
                 form once. Please be respectful. Do not share the link or record
-                the session.
+                the session. These rules apply to both guest sessions.
               </p>
             </FadeUpBlock>
           </div>
@@ -1466,10 +1504,10 @@ export default function EventPage() {
                 </div>
               </div>
 
-              {/* Right Column: Contact Details & Venue (Email spans full row width so address never breaks mid-word; phone removed) */}
+              {/* Right Column: Contact Details & Venue */}
               <div className="md:col-span-7 lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
-                {/* Email (Spans full width of its row) */}
-                <div className="sm:col-span-2 border border-[#F4F0E6]/30 md:border-0 bg-[#111111] md:bg-[#1C1C1C] p-4 md:p-5">
+                {/* Email */}
+                <div className="border border-[#F4F0E6]/30 md:border-0 bg-[#111111] md:bg-[#1C1C1C] p-4 md:p-5">
                   <div className="flex items-center gap-2 font-pixel text-xs uppercase text-[#F5A623]">
                     <Mail className="w-4 h-4 shrink-0" aria-hidden="true" />
                     <span>Email</span>
@@ -1487,6 +1525,22 @@ export default function EventPage() {
                         {CONFIG.CONTACT_EMAIL}
                       </a>
                     )}
+                  </div>
+                </div>
+
+                {/* Phone */}
+                <div className="border border-[#F4F0E6]/30 md:border-0 bg-[#111111] md:bg-[#1C1C1C] p-4 md:p-5">
+                  <div className="flex items-center gap-2 font-pixel text-xs uppercase text-[#1FAA59]">
+                    <Phone className="w-4 h-4 shrink-0" aria-hidden="true" />
+                    <span>Phone</span>
+                  </div>
+                  <div className="mt-2 text-sm sm:text-base md:text-base">
+                    <a
+                      href={`tel:${CONFIG.CONTACT_PHONE.replace(/\s+/g, '')}`}
+                      className="underline decoration-[#1FAA59] underline-offset-4 hover:text-[#F5A623]"
+                    >
+                      {CONFIG.CONTACT_PHONE}
+                    </a>
                   </div>
                 </div>
 
