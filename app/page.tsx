@@ -6,7 +6,7 @@ const CONFIG = {
     "Day 1: Friday, 13 November 2026 (9:30 AM start) | Day 2: Date to be announced",
   EVENT_DATE_ISO: "2026-11-13T09:30:00+05:30",
   DAY_1_DATE: "Friday, 13 November 2026",
-  DAY_1_TIME: "9:30 AM to 3:45 PM",
+  DAY_1_TIME: "9:30 AM to 4 PM",
   DAY_2_DATE: "Date to be announced",
   SCHEDULE_NOTE: "Day 2 date will be announced soon.",
   VENUE:
@@ -281,7 +281,7 @@ const DAY_1_SCHEDULE = [
   },
   {
     step: '02',
-    title: '10:15 AM Opening',
+    title: '10:30 AM Opening',
     accent: '#F5A623',
   },
   {
@@ -292,17 +292,17 @@ const DAY_1_SCHEDULE = [
   },
   {
     step: '04',
-    title: '11:45 AM Pick your idea (choose and scope your project with a mentor)',
+    title: '12:15 PM Pick your idea (choose and scope your project)',
     accent: '#E8392D',
   },
   {
     step: '05',
-    title: '12:15 PM Build time',
+    title: '12:30 PM Build time',
     accent: '#1F4FE0',
   },
   {
     step: '06',
-    title: '3:15 PM Wrap-up and project submission',
+    title: '4 PM Wrap-up and project submission',
     accent: '#F5A623',
   },
 ];
