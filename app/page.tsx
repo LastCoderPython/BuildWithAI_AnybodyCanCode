@@ -30,6 +30,7 @@ const CONFIG = {
     },
     {
       name: "Amaan Bhati",
+      role: "DevRel Engineer",
       org: "Keploy",
       topic:
         "Day 2: Open Source & GSoC, virtual session",
