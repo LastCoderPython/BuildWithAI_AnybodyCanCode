@@ -32,7 +32,7 @@ const CONFIG = {
       name: "Amaan Bhati",
       org: "Keploy",
       topic:
-        "Day 2: Open Source & GSoC, virtual session (subject to final confirmation)",
+        "Day 2: Open Source & GSoC, virtual session",
       photo: "/assets/aistudio/amaan-bhati.webp",
       initials: "AB",
       linkedin: "https://www.linkedin.com/in/amaan-bhati/",
@@ -1164,7 +1164,7 @@ export default function EventPage() {
                   <p className="text-sm sm:text-base md:text-base leading-relaxed text-[#111111]">
                     The three best builds (individual or team) receive in-kind
                     recognition from Keploy, including Keploy Pro credits and
-                    co-branded badges (subject to final confirmation).
+                    co-branded badges.
                   </p>
                 </div>
 
